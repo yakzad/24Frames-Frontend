@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>24Frames — Movie</title>
+
+    <link rel="stylesheet" href="movie.css" />
+    <link rel="icon" href="images/favicon.ico" />
+  </head>
+
+  <body>
+    <main class="movie-wrapper">
+      <header class="movie-header">
+        <button onclick="history.back()">←</button>
+        <div>
+          <h1 id="movieTitle"></h1>
+          <p id="movieMeta"></p>
+        </div>
+      </header>
+
+      <section class="movie-info">
+        <img id="moviePoster" alt="Movie poster" />
+        <p id="movieDescription"></p>
+        <p id="movieRating"></p>
+      </section>
+
+      <nav class="tabs">
+        <button class="active">Videos</button>
+        <button disabled>Reviews</button>
+        <button disabled>Theories</button>
+        <button disabled>Cast</button>
+      </nav>
+
+      <div class="video-item">
+        <section id="videosSection" class="videos-section"></section>
+      </div>
+    </main>
+
+    <script src="movie.js"></script>
+  </body>
+</html>

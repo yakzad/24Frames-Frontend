@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>24Frames — Home</title>
+
+    <link rel="stylesheet" href="home.css" />
+    <link rel="icon" href="images/favicon.ico" />
+  </head>
+
+  <body>
+    <div class="app-wrapper">
+      <!-- Header -->
+      <header class="app-header">
+        <div class="logo">
+          <img src="images/24frames1.png" alt="24Frames logo" />
+        </div>
+        <form id="searchForm">
+          <input
+            type="search"
+            id="searchInput"
+            placeholder="Search movies, actors, directors…"
+          />
+        </form>
+
+        <button class="logout-btn" id="logoutBtn">Log out</button>
+      </header>
+
+      <!-- Main content -->
+      <main class="app-content">
+        <!-- Hero -->
+        <section class="home-hero">
+          <h1>Explore movies deeper</h1>
+          <p>Reviews, theories and videos — all in one place.</p>
+        </section>
+
+        <!-- Trending -->
+        <section class="trending-section today">
+          <h2 class="section-title">Trending Today</h2>
+
+          <div class="movies-grid" id="trendingGrid"></div>
+        </section>
+        <button id="showMoreBtn" class="show-more-btn">Show more</button>
+
+        <section class="trending-section week">
+          <h2 class="section-title">Trending This Week</h2>
+          <p class="muted">Coming soon</p>
+        </section>
+
+        <section class="trending-section year">
+          <h2 class="section-title">Trending This Year</h2>
+          <p class="muted">Coming soon</p>
+        </section>
+      </main>
+    </div>
+
+    <script src="home.js" defer></script>
+  </body>
+</html>

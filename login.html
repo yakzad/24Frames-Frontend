@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>24Frames</title>
+    <link rel="stylesheet" href="login.css" />
+    <link rel="icon" href="images/favicon.ico" />
+  </head>
+
+  <body>
+    <main class="login-wrapper">
+      <section class="login-card">
+        <div class="logo">
+          <img src="images/24frames1.png" alt="24Frames logo" />
+        </div>
+
+        <h1>Welcome to 24Frames</h1>
+
+        <p class="subtitle">
+          Stories, ideas and videos about the movies you love
+        </p>
+
+        <form class="login-form" id="loginForm" method="post">
+          <div class="input-group">
+            <input type="email" name="email" placeholder="Email" required />
+          </div>
+
+          <div class="input-group">
+            <input
+              type="password"
+              name="password"
+              placeholder="Password"
+              required
+            />
+            <button
+              type="button"
+              class="toggle-password"
+              aria-label="Show password"
+            >
+              👁
+            </button>
+          </div>
+
+          <button type="submit" class="primary-button" id="loginBtn">
+            Enter 24Frames
+          </button>
+        </form>
+
+        <div class="secondary-links">
+          <a href="register.html">Create account</a>
+          <a href="forgot.html">Forgot password</a>
+        </div>
+      </section>
+    </main>
+    <script src="login.js"></script>
+  </body>
+</html>

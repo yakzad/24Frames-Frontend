@@ -1,0 +1,273 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  height: 100%;
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #0f1e3a;
+  color: #e6dcc8;
+}
+
+.movie-wrapper {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.movie-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.movie-header button {
+  background: none;
+  border: none;
+  color: #f6dcac;
+  font-size: 1.4rem;
+  cursor: pointer;
+}
+
+.movie-header h1 {
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+.movie-header p {
+  font-size: 0.9rem;
+  color: #faa968;
+}
+
+.movie-info {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 20px;
+  align-items: start;
+  margin-bottom: 20px;
+}
+
+.movie-info img {
+  width: 120px;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+.stats {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.stats span {
+  background: rgba(255, 255, 255, 0.06);
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  opacity: 0.8;
+}
+
+.tabs {
+  display: flex;
+  gap: 16px;
+  border-bottom: 1px solid rgba(246, 220, 172, 0.2);
+  margin-bottom: 16px;
+}
+
+.tabs button {
+  background: none;
+  border: none;
+  padding: 10px 0;
+  font-size: 0.9rem;
+  color: #faa968;
+  cursor: pointer;
+}
+
+.tabs button.active {
+  color: #f6dcac;
+  border-bottom: 2px solid #f85525;
+}
+
+.content-list {
+  display: grid;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.video-card {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 20px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 14px;
+  align-items: center;
+}
+
+.video-embed {
+  width: 260px;
+  aspect-ratio: 16 / 9;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.video-embed iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+.video-meta {
+  display: flex;
+  flex-direction: column;
+}
+
+.video-meta h4 {
+  margin: 0;
+  font-size: 1rem;
+  color: #f6dcac;
+}
+
+.video-creator {
+  font-size: 0.75rem;
+  color: #faa968;
+  margin-top: 6px;
+}
+
+.video-description {
+  margin-top: 4px;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  opacity: 0.85;
+}
+.input-group input::placeholder {
+  color: #faa968;
+  opacity: 0.7;
+}
+.review-card {
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 14px;
+}
+
+.review-card h4 {
+  color: #f2e6cf;
+  margin-bottom: 6px;
+}
+
+.review-excerpt {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  opacity: 0.9;
+}
+
+.review-author {
+  display: block;
+  margin-top: 8px;
+  font-size: 0.75rem;
+  color: #faa968;
+}
+.review-card h4,
+.video-meta h4,
+#movieTitle {
+  color: #f6c177;
+  font-weight: 600;
+}
+
+.theory-body.collapsed {
+  display: none;
+}
+.spoiler-pill {
+  display: inline-block;
+  margin: 8px 0 12px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(246, 220, 172, 0.15);
+  color: #f6dcac;
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.spoiler-pill:hover {
+  background: rgba(246, 220, 172, 0.25);
+}
+
+.spoiler-pill:active {
+  transform: scale(0.96);
+}
+
+.videos-section {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  margin-top: 24px;
+}
+.video-item {
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+.video-item h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: #f6dcac;
+  line-height: 1.4;
+}
+.video-item p {
+  font-size: 0.85rem;
+  color: #faa968;
+  margin-bottom: 12px;
+}
+
+.video-item iframe {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 12px;
+  border: none;
+}
+#movieRating {
+  margin-top: 12px;
+  font-size: 0.9rem;
+  color: #f6dcac;
+}
+
+.video-item {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.video-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+}
+.video-item:active {
+  transform: translateY(0);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+.video-item {
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 16px;
+  padding: 16px;
+  overflow: hidden;
+}
+
+.video-item iframe {
+  width: auto;
+  height: auto;
+  border: none;
+  border-radius: 12px;
+
+  transform: scale(1.03);
+}
