@@ -1,3 +1,9 @@
+const token = localStorage.getItem("token");
+
+if (token) {
+  window.location.href = "index.html";
+}
+
 const form = document.getElementById("loginForm");
 
 form.addEventListener("submit", async (e) => {
@@ -33,7 +39,7 @@ form.addEventListener("submit", async (e) => {
 
     localStorage.setItem("token", data.token);
 
-    window.location.href = "home.html";
+    window.location.href = "index.html";
   } catch (err) {
     alert(err.message);
   } finally {

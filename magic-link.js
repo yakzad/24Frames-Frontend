@@ -21,7 +21,7 @@ if (!token) {
       localStorage.setItem("token", "mock-session-token");
 
       setTimeout(() => {
-        window.location.href = "home.html";
+        window.location.href = "index.html";
       }, 1000);
     } else {
       statusText.textContent =

@@ -44,7 +44,7 @@ if (form) {
 
       if (data.token) {
         localStorage.setItem("token", data.token);
-        window.location.href = "home.html";
+        window.location.href = "index.html";
       } else {
         window.location.href = "login.html";
       }

@@ -6,7 +6,7 @@ const params = new URLSearchParams(window.location.search);
 const movieId = params.get("id");
 
 if (!movieId) {
-  window.location.href = "home.html";
+  window.location.href = "index.html";
 }
 
 fetch(`https://api.24frames.app/movie/${movieId}`, {
