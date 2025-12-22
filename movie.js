@@ -49,7 +49,7 @@ fetch(`https://api.24frames.app/movie/${movieId}`, {
 
       videosSection.innerHTML = "<p>Loading videos...</p>";
 
-      fetch(`http://api.24frames.app/movie/${movieId}/video`)
+      fetch(`https://api.24frames.app/movie/${movieId}/video`)
         .then((res) => {
           if (!res.ok) throw new Error("Failed to load videos");
           return res.json();
