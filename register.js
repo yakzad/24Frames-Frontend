@@ -4,12 +4,13 @@ if (form) {
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
+    const name = form.name.value.trim();
     const username = form.username.value.trim();
     const email = form.email.value.trim();
     const password = form.password.value;
     const confirmPassword = form.confirm_password.value;
 
-    if (!username || !email || !password || !confirmPassword) {
+    if (!name || !username || !email || !password || !confirmPassword) {
       alert("Please fill all fields");
       return;
     }
@@ -30,6 +31,7 @@ if (form) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          name,
           username,
           email,
           password,

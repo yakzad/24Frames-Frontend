@@ -39,6 +39,17 @@ form.addEventListener("submit", async (e) => {
 
     localStorage.setItem("token", data.token);
 
+    if (data.user) {
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          name: data.user.name,
+          username: data.user.username,
+          avatar: data.user.avatar || "",
+        })
+      );
+    }
+
     window.location.href = "index.html";
   } catch (err) {
     alert(err.message);
