@@ -13,11 +13,7 @@ if (logoutBtn) {
 
 const grid = document.getElementById("trendingGrid");
 
-fetch("http://api.24frames.app/movie/popular", {
-  headers: {
-    Authorization: `Bearer ${token}`,
-  },
-})
+fetch("https://api.24frames.app/movie/popular")
   .then((res) => {
     if (res.status === 401 || res.status === 403) {
       localStorage.removeItem("token");
@@ -129,26 +125,12 @@ async function handleSearch(query) {
 
   if (showMoreBtn) showMoreBtn.style.display = "none";
 
-  const filtered = movies.filter((movie) => {
-    const haystack = [movie.title, movie.original_title, movie.name]
-      .filter(Boolean)
-      .join(" ")
-      .toLowerCase();
-
-    return haystack.includes(normalized);
-  });
-
-  if (filtered.length > 0) {
-    renderMovies(filtered);
-    return;
-  }
-
   try {
     if (searchController) searchController.abort();
     searchController = new AbortController();
 
     const res = await fetch(
-      `http://api.24frames.app/movie/search?q=${encodeURIComponent(
+      `https://api.24frames.app/movie/search?query=${encodeURIComponent(
         normalized
       )}`,
       {

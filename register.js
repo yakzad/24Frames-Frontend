@@ -2,14 +2,14 @@ const form = document.getElementById("registerForm");
 
 if (form) {
   form.addEventListener("submit", async (e) => {
-    e.preventDefault(); // bloquea POST nativo al HTML
+    e.preventDefault();
 
-    const name = form.name.value.trim();
+    const username = form.username.value.trim();
     const email = form.email.value.trim();
     const password = form.password.value;
     const confirmPassword = form.confirm_password.value;
 
-    if (!name || !email || !password || !confirmPassword) {
+    if (!username || !email || !password || !confirmPassword) {
       alert("Please fill all fields");
       return;
     }
@@ -30,7 +30,7 @@ if (form) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          name,
+          username,
           email,
           password,
         }),
