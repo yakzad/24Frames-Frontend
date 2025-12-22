@@ -2,11 +2,6 @@
   const user = JSON.parse(localStorage.getItem("user"));
   const token = localStorage.getItem("token");
 
-  if (!token || !user) {
-    window.location.href = "login.html";
-    return;
-  }
-
   const avatarEl = document.querySelector(".sb-avatar");
   const nameEl = document.querySelector(".sb-name");
   const handleEl = document.querySelector(".sb-handle");
