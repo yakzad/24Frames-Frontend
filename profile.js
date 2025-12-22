@@ -1,32 +1,27 @@
-const user = JSON.parse(localStorage.getItem("user"));
-const token = localStorage.getItem("token");
+const rawUser = localStorage.getItem("user");
 
-if (!token || !user) {
-  window.location.href = "login.html";
-}
+if (!rawUser) {
+  console.warn("No user in localStorage");
+} else {
+  const user = JSON.parse(rawUser);
 
-// avatar
-const avatar = document.querySelector(".profile-avatar");
-if (avatar && user.avatar) {
-  avatar.innerHTML = `<img src="${user.avatar}" alt="Profile picture">`;
-}
+  // avatar
+  const avatar = document.querySelector(".profile-avatar");
+  avatar.innerHTML = `<img src="${user.avatar}" alt="Profile picture" />`;
 
-// name
-const name = document.querySelector(".profile-name");
-if (name) {
-  name.textContent = user.name || "";
-}
+  // sidebar avatar
+  const sbAvatar = document.querySelector(".sb-avatar");
+  if (sbAvatar) {
+    sbAvatar.innerHTML = `<img src="${user.avatar}" alt="Profile picture" />`;
+  }
 
-// handle
-const handle = document.querySelector(".profile-handle");
-if (handle) {
-  handle.textContent = user.username ? `@${user.username}` : "";
-}
-const logoutBtn = document.getElementById("logoutBtn");
-if (logoutBtn) {
-  logoutBtn.addEventListener("click", () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    window.location.href = "login.html";
-  });
+  // name
+  document.querySelector(".profile-name").textContent = user.name;
+
+  // username
+  document.querySelector(".profile-handle").textContent = `@${user.username}`;
+
+  // sidebar
+  document.querySelector(".sb-name").textContent = user.name;
+  document.querySelector(".sb-handle").textContent = `@${user.username}`;
 }

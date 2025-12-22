@@ -1,3 +1,5 @@
+const token = localStorage.getItem("token");
+
 const user = JSON.parse(localStorage.getItem("user"));
 
 if (user) {
@@ -13,8 +15,6 @@ if (user) {
   if (handleEl) handleEl.textContent = user.username ? `@${user.username}` : "";
 }
 
-const token = localStorage.getItem("token");
-if (!token) window.location.href = "login.html";
 const loadedMovieIds = new Set();
 let isSearching = false;
 
@@ -31,10 +31,10 @@ const grid = document.getElementById("trendingGrid");
 fetch("https://api.24frames.app/movie/popular")
   .then((res) => {
     if (res.status === 401 || res.status === 403) {
-      localStorage.removeItem("token");
-      window.location.href = "login.html";
+      console.warn("Unauthorized – session expired");
       return;
     }
+
     return res.json();
   })
   .then((data) => {
@@ -162,7 +162,6 @@ async function handleSearch(query) {
     }
 
     const data = await res.json();
-    console.log("BACKEND RESULTS:", data.results || data);
     renderMovies(data.results || data);
   } catch (err) {
     if (err.name !== "AbortError") {
@@ -175,14 +174,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const searchInput = document.getElementById("searchInput");
   const searchForm = document.getElementById("searchForm");
 
-  console.log("searchInput:", searchInput);
-
   if (!searchInput) return;
 
   searchForm?.addEventListener("submit", (e) => e.preventDefault());
 
   searchInput.addEventListener("input", (e) => {
-    console.log("INPUT:", e.target.value);
     handleSearch(e.target.value);
   });
 });

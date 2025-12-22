@@ -496,3 +496,10 @@ body {
   font-size: 12px;
   letter-spacing: 0.08em;
 }
+
+.sb-avatar img {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+}
