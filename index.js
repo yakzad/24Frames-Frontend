@@ -13,7 +13,7 @@ if (logoutBtn) {
 
 const grid = document.getElementById("trendingGrid");
 
-fetch("http://localhost:8000/movie/popular", {
+fetch("http://api.24frames.app/movie/popular", {
   headers: {
     Authorization: `Bearer ${token}`,
   },
@@ -148,7 +148,9 @@ async function handleSearch(query) {
     searchController = new AbortController();
 
     const res = await fetch(
-      `http://localhost:8000/movie/search?q=${encodeURIComponent(normalized)}`,
+      `http://api.24frames.app/movie/search?q=${encodeURIComponent(
+        normalized
+      )}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,

@@ -2,7 +2,7 @@ const form = document.getElementById("registerForm");
 
 if (form) {
   form.addEventListener("submit", async (e) => {
-    e.preventDefault();
+    e.preventDefault(); // bloquea POST nativo al HTML
 
     const name = form.name.value.trim();
     const email = form.email.value.trim();
@@ -54,5 +54,20 @@ if (form) {
       button.disabled = false;
       button.textContent = "Create account";
     }
+  });
+}
+const toggleBtn = document.querySelector(".toggle-password");
+const passwordInput = document.querySelector('input[name="password"]');
+const confirmPasswordInput = document.querySelector(
+  'input[name="confirm_password"]'
+);
+
+if (toggleBtn && passwordInput && confirmPasswordInput) {
+  toggleBtn.addEventListener("click", () => {
+    const isPassword = passwordInput.type === "password";
+
+    passwordInput.type = isPassword ? "text" : "password";
+    confirmPasswordInput.type = isPassword ? "text" : "password";
+    toggleBtn.textContent = isPassword ? "👁️‍🗨️" : "👁";
   });
 }
