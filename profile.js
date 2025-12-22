@@ -1,27 +1,43 @@
-const rawUser = localStorage.getItem("user");
-
-if (!rawUser) {
-  console.warn("No user in localStorage");
-} else {
-  const user = JSON.parse(rawUser);
-
-  // avatar
-  const avatar = document.querySelector(".profile-avatar");
-  avatar.innerHTML = `<img src="${user.avatar}" alt="Profile picture" />`;
-
-  // sidebar avatar
-  const sbAvatar = document.querySelector(".sb-avatar");
-  if (sbAvatar) {
-    sbAvatar.innerHTML = `<img src="${user.avatar}" alt="Profile picture" />`;
+document.addEventListener("DOMContentLoaded", () => {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    console.warn("No token");
+    return; // aquí SÍ es válido (está dentro de la función)
   }
 
-  // name
-  document.querySelector(".profile-name").textContent = user.name;
+  fetch("https://api.24frames.app/profile", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+    .then((res) => {
+      if (!res.ok) throw new Error("Unauthorized");
+      return res.json();
+    })
+    .then((user) => {
+      const avatarSrc = user.avatar || "images/claqueta profile.png";
 
-  // username
-  document.querySelector(".profile-handle").textContent = `@${user.username}`;
+      // main profile (si existe en esta página)
+      const pAvatar = document.querySelector(".profile-avatar");
+      const pName = document.querySelector(".profile-name");
+      const pHandle = document.querySelector(".profile-handle");
 
-  // sidebar
-  document.querySelector(".sb-name").textContent = user.name;
-  document.querySelector(".sb-handle").textContent = `@${user.username}`;
-}
+      if (pAvatar)
+        pAvatar.innerHTML = `<img src="${avatarSrc}" alt="Profile picture" />`;
+      if (pName) pName.textContent = user.name;
+      if (pHandle) pHandle.textContent = `@${user.username}`;
+
+      // sidebar (si existe)
+      const sbAvatar = document.querySelector(".sb-avatar");
+      const sbName = document.querySelector(".sb-name");
+      const sbHandle = document.querySelector(".sb-handle");
+
+      if (sbAvatar)
+        sbAvatar.innerHTML = `<img src="${avatarSrc}" alt="Profile picture" />`;
+      if (sbName) sbName.textContent = user.name;
+      if (sbHandle) sbHandle.textContent = `@${user.username}`;
+    })
+    .catch((err) => {
+      console.error("Profile fetch failed", err);
+    });
+});
