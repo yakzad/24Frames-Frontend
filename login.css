@@ -236,9 +236,7 @@ h1 {
     transform: translateY(0);
   }
 }
-.input-group {
-  margin-bottom: 14px; /* ajusta a 12–18px si quieres */
-}
+
 .input-group input {
   font-size: 15px; /* ajusta a 14–16px si quieres */
   line-height: 1.4;
