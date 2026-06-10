@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>24Frames — Movie</title>
 
-    <link rel="stylesheet" href="movie.css" />
+    <link rel="stylesheet" href="movie.css?v=6" />
     <link rel="icon" href="images/favicon.ico" />
   </head>
 
@@ -21,22 +21,75 @@
 
       <section class="movie-info">
         <img id="moviePoster" alt="Movie poster" />
-        <p id="movieDescription"></p>
-        <p id="movieRating"></p>
+        <div>
+          <p id="movieDescription"></p>
+          <p id="movieRating"></p>
+          <div class="movie-actions">
+            <button id="favouriteBtn" class="favourite-btn" style="display:none" aria-label="Add to Favourites">♡</button>
+            <div class="list-picker-wrap" id="listPickerWrap" style="display:none">
+              <button id="addToListBtn" class="add-to-list-btn">+ List</button>
+              <div class="list-picker" id="listPicker"></div>
+            </div>
+          </div>
+          <div id="ratingWrap" style="display:none" class="rating-wrap">
+            <p class="rating-label">Your rating</p>
+            <div class="clap-row" id="clapRow">
+              <span class="clap" data-score="1">🎬</span>
+              <span class="clap" data-score="2">🎬</span>
+              <span class="clap" data-score="3">🎬</span>
+              <span class="clap" data-score="4">🎬</span>
+              <span class="clap" data-score="5">🎬</span>
+            </div>
+          </div>
+        </div>
       </section>
 
       <nav class="tabs">
-        <button class="active">Videos</button>
-        <button disabled>Reviews</button>
-        <button disabled>Theories</button>
-        <button disabled>Cast</button>
+        <button class="tab-btn active" data-tab="videos">Videos</button>
+        <button class="tab-btn" data-tab="reviews">Reviews</button>
+        <button class="tab-btn" data-tab="theories">Theories</button>
+        <button class="tab-btn" data-tab="funfacts">Fun Facts</button>
       </nav>
 
-      <div class="video-item">
-        <section id="videosSection" class="videos-section"></section>
-      </div>
+      <section id="videosSection" class="tab-section videos-section"></section>
+
+      <section id="reviewsSection" class="tab-section" style="display:none">
+        <form class="post-form" id="reviewForm">
+          <textarea name="content" placeholder="Write your review…" required></textarea>
+          <button type="submit">Post review</button>
+        </form>
+        <div class="posts-list" id="reviewsList"></div>
+        <div class="gate-overlay">
+          <p>Log in to read and post reviews</p>
+          <a href="login.html" class="gate-btn">Log in</a>
+        </div>
+      </section>
+
+      <section id="theoriesSection" class="tab-section" style="display:none">
+        <form class="post-form" id="theoryForm">
+          <textarea name="content" placeholder="Share your theory…" required></textarea>
+          <button type="submit">Post theory</button>
+        </form>
+        <div class="posts-list" id="theoriesList"></div>
+        <div class="gate-overlay">
+          <p>Log in to read and post theories</p>
+          <a href="login.html" class="gate-btn">Log in</a>
+        </div>
+      </section>
+
+      <section id="funfactsSection" class="tab-section" style="display:none">
+        <form class="post-form" id="funFactForm">
+          <textarea name="content" placeholder="Share a fun fact…" required></textarea>
+          <button type="submit">Post fun fact</button>
+        </form>
+        <div class="posts-list" id="funfactsList"></div>
+        <div class="gate-overlay">
+          <p>Log in to read and post fun facts</p>
+          <a href="login.html" class="gate-btn">Log in</a>
+        </div>
+      </section>
     </main>
 
-    <script src="movie.js"></script>
+    <script src="movie.js?v=8"></script>
   </body>
 </html>
