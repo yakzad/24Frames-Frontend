@@ -4,21 +4,32 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>24Frames — Profile</title>
+    <meta name="description" content="View this user's lists, reviews and theories on 24Frames." />
+    <meta name="theme-color" content="#0f1e3a" />
+    <meta property="og:site_name" content="24Frames" />
+    <meta property="og:title" content="24Frames — Profile" />
+    <meta property="og:description" content="View lists, reviews and theories on 24Frames." />
+    <meta property="og:image" content="https://24frames.app/images/24frames1.png" />
+    <meta property="og:type" content="profile" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:image" content="https://24frames.app/images/24frames1.png" />
 
-    <link rel="stylesheet" href="index.css" />
+    <link rel="stylesheet" href="index.css?v=5" />
+    <link rel="stylesheet" href="profile.css?v=1" />
+    <link rel="stylesheet" href="reviews.css?v=1" />
+    <link rel="icon" href="images/favicon.ico" />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet" />
   </head>
-
   <body>
     <div class="app-wrapper">
       <aside class="sidebar">
-        <div class="sidebar-header sb-profile">
+        <div class="sidebar-header sb-profile" onclick="location.href='profile.html'">
           <div class="sb-avatar"></div>
           <div class="sb-user">
             <div class="sb-name"></div>
             <div class="sb-handle"></div>
           </div>
         </div>
-
         <nav class="sidebar-nav">
           <a href="index.html">Home</a>
           <a href="lists.html">My Lists</a>
@@ -26,18 +37,42 @@
           <a href="reviews.html">My Reviews</a>
           <a href="settings.html">Settings</a>
         </nav>
+        <div class="sidebar-footer" id="sidebarFooter">
+          <button class="logout-btn" id="logoutBtn">Log out</button>
+        </div>
       </aside>
 
       <main class="app-content">
-        <section class="profile-card">
-          <div class="profile-avatar"></div>
+        <div class="profile-hero">
+          <div class="profile-avatar-wrap">
+            <img id="profileAvatar" src="images/claqueta%20profile.png" alt="Avatar" />
+          </div>
+          <div class="profile-info">
+            <h1 id="profileName"></h1>
+            <p id="profileHandle"></p>
+            <a id="editProfileLink" href="settings.html" class="profile-edit-btn" style="display:none">Edit profile</a>
+          </div>
+        </div>
 
-          <h1 class="profile-name"></h1>
-          <p class="profile-handle"></p>
+        <section class="profile-section">
+          <h3 class="profile-section-title">Lists</h3>
+          <div class="profile-lists" id="profileLists"></div>
+        </section>
+
+        <section class="profile-section">
+          <h3 class="profile-section-title">Posts</h3>
+          <nav class="post-tabs">
+            <button class="post-tab active" data-type="all">All</button>
+            <button class="post-tab" data-type="review">Reviews</button>
+            <button class="post-tab" data-type="theory">Theories</button>
+            <button class="post-tab" data-type="funFact">Fun Facts</button>
+          </nav>
+          <div id="profilePosts"></div>
         </section>
       </main>
     </div>
 
-    <script src="profile.js"></script>
+    <script src="sidebar.js?v=3"></script>
+    <script src="profile.js?v=3"></script>
   </body>
 </html>

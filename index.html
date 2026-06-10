@@ -7,9 +7,21 @@
       content="width=device-width, initial-scale=1.0"
       url="index.html"
     />
-    <title>24Frames — Home</title>
+    <title>24Frames — Explore Movies Deeper</title>
+    <meta name="description" content="Reviews, theories, fun facts and videos about the movies you love — all in one place." />
+    <meta name="theme-color" content="#0f1e3a" />
+    <meta property="og:site_name" content="24Frames" />
+    <meta property="og:title" content="24Frames — Explore Movies Deeper" />
+    <meta property="og:description" content="Reviews, theories, fun facts and videos about the movies you love." />
+    <meta property="og:image" content="https://24frames.app/images/24frames1.png" />
+    <meta property="og:url" content="https://24frames.app" />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="24Frames — Explore Movies Deeper" />
+    <meta name="twitter:description" content="Reviews, theories, fun facts and videos about the movies you love." />
+    <meta name="twitter:image" content="https://24frames.app/images/24frames1.png" />
 
-    <link rel="stylesheet" href="index.css" />
+    <link rel="stylesheet" href="index.css?v=5" />
     <a href="index.html" class="logo-link"> </a>
     <link
       href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&display=swap"
@@ -37,9 +49,11 @@
           <a href="friends.html">Friends</a>
           <a href="reviews.html">My Reviews</a>
           <a href="settings.html">Settings</a>
-          <br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
-          <button class="logout-btn" id="logoutBtn">Log out</button>
         </nav>
+
+        <div class="sidebar-footer" id="sidebarFooter">
+          <button class="logout-btn" id="logoutBtn">Log out</button>
+        </div>
       </aside>
 
       <!-- Header -->
@@ -84,6 +98,7 @@
       </main>
     </div>
 
-    <script src="index.js" defer></script>
+    <script src="sidebar.js?v=3"></script>
+    <script src="index.js?v=6" defer></script>
   </body>
 </html>

@@ -13,11 +13,10 @@ fetch(`https://api.24frames.app/movie/${movieId}`, {
 })
   .then((res) => res.json())
   .then((data) => {
-    document.getElementById("movieTitle").textContent =
-      data.title || data.original_title || "";
+    const title = data.title || data.original_title || "";
 
-    document.getElementById("movieDescription").textContent =
-      data.overview || "";
+    document.getElementById("movieTitle").textContent = title;
+    document.getElementById("movieDescription").textContent = data.overview || "";
 
     const posterImg = document.getElementById("moviePoster");
     posterImg.src = data.poster_path
@@ -30,6 +29,25 @@ fetch(`https://api.24frames.app/movie/${movieId}`, {
     document.getElementById(
       "movieRating"
     ).textContent = `⭐ ${data.vote_average} (${data.vote_count} votes)`;
+
+    // update meta tags for social sharing
+    const pageTitle = `${title} — 24Frames`;
+    const desc = data.overview
+      ? data.overview.slice(0, 200)
+      : `Reviews, theories and videos about ${title} on 24Frames.`;
+    const posterUrl = data.poster_path
+      ? `https://image.tmdb.org/t/p/w500${data.poster_path}`
+      : "https://24frames.app/images/24frames1.png";
+
+    document.title = pageTitle;
+    document.querySelector('meta[name="description"]').setAttribute("content", desc);
+    document.querySelector('meta[property="og:title"]').setAttribute("content", pageTitle);
+    document.querySelector('meta[property="og:description"]').setAttribute("content", desc);
+    document.querySelector('meta[property="og:image"]').setAttribute("content", posterUrl);
+    document.querySelector('meta[property="og:url"]').setAttribute("content", window.location.href);
+    document.querySelector('meta[name="twitter:title"]').setAttribute("content", pageTitle);
+    document.querySelector('meta[name="twitter:description"]').setAttribute("content", desc);
+    document.querySelector('meta[name="twitter:image"]').setAttribute("content", posterUrl);
 
     loadVideos(movieId);
   })

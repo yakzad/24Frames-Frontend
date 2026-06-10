@@ -3,11 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>24Frames — Friends</title>
+    <title>24Frames — Settings</title>
     <meta name="robots" content="noindex" />
     <meta name="theme-color" content="#0f1e3a" />
     <link rel="stylesheet" href="index.css?v=5" />
-    <link rel="stylesheet" href="friends.css?v=1" />
+    <link rel="stylesheet" href="settings.css?v=1" />
     <link rel="icon" href="images/favicon.ico" />
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet" />
   </head>
@@ -24,9 +24,9 @@
         <nav class="sidebar-nav">
           <a href="index.html">Home</a>
           <a href="lists.html">My Lists</a>
-          <a href="friends.html" class="active">Friends</a>
+          <a href="friends.html">Friends</a>
           <a href="reviews.html">My Reviews</a>
-          <a href="settings.html">Settings</a>
+          <a href="settings.html" class="active">Settings</a>
         </nav>
         <div class="sidebar-footer" id="sidebarFooter">
           <button class="logout-btn" id="logoutBtn">Log out</button>
@@ -34,31 +34,31 @@
       </aside>
 
       <main class="app-content">
-        <h2 class="section-title">Friends</h2>
+        <h2 class="section-title">Settings</h2>
 
-        <div class="friends-search-wrap">
-          <input
-            type="search"
-            id="userSearchInput"
-            class="friends-search-input"
-            placeholder="Search users by name or username…"
-            autocomplete="off"
-          />
-        </div>
+        <form class="settings-form" id="settingsForm">
+          <div class="settings-group">
+            <label for="settingName">Name</label>
+            <input type="text" id="settingName" name="name" placeholder="Your name" />
+          </div>
+          <div class="settings-group">
+            <label for="settingUsername">Username</label>
+            <input type="text" id="settingUsername" name="username" placeholder="@username" />
+          </div>
+          <div class="settings-group">
+            <label for="settingEmail">Email</label>
+            <input type="email" id="settingEmail" name="email" placeholder="you@example.com" />
+          </div>
 
-        <section id="searchResultsSection" style="display:none">
-          <h3 class="friends-section-label">Search Results</h3>
-          <div id="searchResults" class="user-cards"></div>
-        </section>
-
-        <section id="followingSection">
-          <h3 class="friends-section-label">Following</h3>
-          <div id="followingList" class="user-cards"></div>
-        </section>
+          <div class="settings-actions">
+            <button type="submit" class="settings-save-btn" id="saveBtn">Save changes</button>
+            <p class="settings-feedback" id="settingsFeedback"></p>
+          </div>
+        </form>
       </main>
     </div>
 
     <script src="sidebar.js?v=3"></script>
-    <script src="friends.js?v=1"></script>
+    <script src="settings.js?v=1"></script>
   </body>
 </html>

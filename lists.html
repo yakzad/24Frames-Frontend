@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>24Frames — My Lists</title>
+    <meta name="robots" content="noindex" />
+    <meta name="theme-color" content="#0f1e3a" />
+
+    <link rel="stylesheet" href="index.css?v=5" />
+    <link rel="stylesheet" href="lists.css?v=1" />
+    <link rel="icon" href="images/favicon.ico" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body>
+    <div class="app-wrapper">
+      <aside class="sidebar">
+        <div
+          class="sidebar-header sb-profile"
+          onclick="location.href='profile.html'"
+        >
+          <div class="sb-avatar"></div>
+          <div class="sb-user">
+            <div class="sb-name"></div>
+            <div class="sb-handle"></div>
+          </div>
+        </div>
+
+        <nav class="sidebar-nav">
+          <a href="index.html">Home</a>
+          <a href="lists.html" class="active">My Lists</a>
+          <a href="friends.html">Friends</a>
+          <a href="reviews.html">My Reviews</a>
+          <a href="settings.html">Settings</a>
+        </nav>
+
+        <div class="sidebar-footer" id="sidebarFooter">
+          <button class="logout-btn" id="logoutBtn">Log out</button>
+        </div>
+      </aside>
+
+      <main class="app-content">
+        <div class="lists-header">
+          <h2 class="section-title">My Lists</h2>
+          <button class="new-list-btn" id="newListBtn">+ New list</button>
+        </div>
+
+        <form class="new-list-form" id="newListForm" style="display:none">
+          <input type="text" id="newListName" placeholder="List name…" maxlength="88" />
+          <button type="submit">Create</button>
+          <button type="button" id="cancelListBtn">Cancel</button>
+        </form>
+
+        <div class="lists-grid" id="listsGrid"></div>
+      </main>
+    </div>
+
+    <script src="sidebar.js?v=3"></script>
+    <script src="lists.js?v=3"></script>
+  </body>
+</html>

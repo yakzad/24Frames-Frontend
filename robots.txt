@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /settings.html
+Disallow: /reviews.html
+Disallow: /friends.html
+Disallow: /lists.html
+Disallow: /list.html
+
+Sitemap: https://24frames.app/sitemap.xml

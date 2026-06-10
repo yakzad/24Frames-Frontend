@@ -3,11 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>24Frames — Friends</title>
+    <title>24Frames — My Posts</title>
     <meta name="robots" content="noindex" />
     <meta name="theme-color" content="#0f1e3a" />
     <link rel="stylesheet" href="index.css?v=5" />
-    <link rel="stylesheet" href="friends.css?v=1" />
+    <link rel="stylesheet" href="reviews.css?v=1" />
     <link rel="icon" href="images/favicon.ico" />
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet" />
   </head>
@@ -24,8 +24,8 @@
         <nav class="sidebar-nav">
           <a href="index.html">Home</a>
           <a href="lists.html">My Lists</a>
-          <a href="friends.html" class="active">Friends</a>
-          <a href="reviews.html">My Reviews</a>
+          <a href="friends.html">Friends</a>
+          <a href="reviews.html" class="active">My Reviews</a>
           <a href="settings.html">Settings</a>
         </nav>
         <div class="sidebar-footer" id="sidebarFooter">
@@ -34,31 +34,20 @@
       </aside>
 
       <main class="app-content">
-        <h2 class="section-title">Friends</h2>
+        <h2 class="section-title">My Posts</h2>
 
-        <div class="friends-search-wrap">
-          <input
-            type="search"
-            id="userSearchInput"
-            class="friends-search-input"
-            placeholder="Search users by name or username…"
-            autocomplete="off"
-          />
-        </div>
+        <nav class="post-tabs">
+          <button class="post-tab active" data-type="all">All</button>
+          <button class="post-tab" data-type="review">Reviews</button>
+          <button class="post-tab" data-type="theory">Theories</button>
+          <button class="post-tab" data-type="funFact">Fun Facts</button>
+        </nav>
 
-        <section id="searchResultsSection" style="display:none">
-          <h3 class="friends-section-label">Search Results</h3>
-          <div id="searchResults" class="user-cards"></div>
-        </section>
-
-        <section id="followingSection">
-          <h3 class="friends-section-label">Following</h3>
-          <div id="followingList" class="user-cards"></div>
-        </section>
+        <div id="postsContainer"></div>
       </main>
     </div>
 
     <script src="sidebar.js?v=3"></script>
-    <script src="friends.js?v=1"></script>
+    <script src="reviews.js?v=1"></script>
   </body>
 </html>
