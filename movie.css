@@ -860,6 +860,10 @@ body {
   color: inherit;
   border-radius: 8px;
   transition: background 0.12s;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  width: fit-content;
 }
 
 .post-author-link:hover,
