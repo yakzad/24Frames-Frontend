@@ -434,13 +434,13 @@ function renderPosts(posts, container, tab) {
       const replyBadge = replyCount > 0 ? `<span class="reply-count-badge">${replyCount}</span>` : "";
       return `
         <div class="review-card" data-post-id="${p.ID}">
-          <div class="post-header">
+          <a class="post-header post-author-link" href="profile.html?id=${p.user_id}">
             <img class="post-avatar" src="images/claqueta%20profile.png" alt="" />
             <div class="post-meta">
               <span class="post-name">${display}</span>
               <span class="post-handle">@${escapeHtml(p.username)} · ${timeAgo(p.created_at)}</span>
             </div>
-          </div>
+          </a>
           <p class="review-excerpt post-body-clickable" data-post-id="${p.ID}">${escapeHtml(p.body)}</p>
           <div class="post-footer">
             ${user ? `<button class="like-btn${likedClass}" data-post-id="${p.ID}" data-liked="${p.liked_by_me ? "1" : "0"}" data-count="${count}">♥ <span class="like-count">${count}</span></button>` : `<span class="like-count-static">♥ ${count}</span>`}
@@ -489,13 +489,13 @@ function renderReplies(replies, container) {
       const display = escapeHtml(r.name || r.username || "User");
       return `
         <div class="reply-card">
-          <div class="reply-header">
+          <a class="reply-header reply-author-link" href="profile.html?id=${r.user_id}">
             <img class="reply-avatar" src="images/claqueta%20profile.png" alt="" />
             <div class="reply-meta">
               <span class="reply-name">${display}</span>
               <span class="reply-handle">@${escapeHtml(r.username)} · ${timeAgo(r.created_at)}</span>
             </div>
-          </div>
+          </a>
           <p class="reply-body">${escapeHtml(r.body)}</p>
         </div>
       `;

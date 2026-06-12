@@ -854,6 +854,19 @@ body {
   padding-left: 2px;
 }
 
+.post-author-link,
+.reply-author-link {
+  text-decoration: none;
+  color: inherit;
+  border-radius: 8px;
+  transition: background 0.12s;
+}
+
+.post-author-link:hover,
+.reply-author-link:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
 .post-body-clickable {
   cursor: pointer;
 }
