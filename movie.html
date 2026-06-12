@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -17,14 +17,14 @@
     <meta name="twitter:description" content="Reviews, theories, fun facts and videos." />
     <meta name="twitter:image" content="https://24frames.app/images/24frames1.png" />
 
-    <link rel="stylesheet" href="movie.css?v=6" />
-    <link rel="icon" href="images/favicon.ico" />
+    <link rel="stylesheet" href="movie.css?v=11" />
+    <link rel="icon" type="image/png" href="images/24frames1.png" />
   </head>
 
   <body>
     <main class="movie-wrapper">
       <header class="movie-header">
-        <button onclick="history.back()">←</button>
+        <button onclick="history.length > 1 ? history.back() : location.href='index.html'">←</button>
         <div>
           <h1 id="movieTitle"></h1>
           <p id="movieMeta"></p>
@@ -42,6 +42,7 @@
               <button id="addToListBtn" class="add-to-list-btn">+ List</button>
               <div class="list-picker" id="listPicker"></div>
             </div>
+            <button id="recommendBtn" class="recommend-btn" style="display:none">Recommend</button>
           </div>
           <div id="ratingWrap" style="display:none" class="rating-wrap">
             <p class="rating-label">Your rating</p>
@@ -67,7 +68,7 @@
 
       <section id="reviewsSection" class="tab-section" style="display:none">
         <form class="post-form" id="reviewForm">
-          <textarea name="content" placeholder="Write your review…" required></textarea>
+          <textarea name="content" placeholder="Write your review…" required maxlength="2000"></textarea>
           <button type="submit">Post review</button>
         </form>
         <div class="posts-list" id="reviewsList"></div>
@@ -79,7 +80,7 @@
 
       <section id="theoriesSection" class="tab-section" style="display:none">
         <form class="post-form" id="theoryForm">
-          <textarea name="content" placeholder="Share your theory…" required></textarea>
+          <textarea name="content" placeholder="Share your theory…" required maxlength="2000"></textarea>
           <button type="submit">Post theory</button>
         </form>
         <div class="posts-list" id="theoriesList"></div>
@@ -91,7 +92,7 @@
 
       <section id="funfactsSection" class="tab-section" style="display:none">
         <form class="post-form" id="funFactForm">
-          <textarea name="content" placeholder="Share a fun fact…" required></textarea>
+          <textarea name="content" placeholder="Share a fun fact…" required maxlength="2000"></textarea>
           <button type="submit">Post fun fact</button>
         </form>
         <div class="posts-list" id="funfactsList"></div>
@@ -102,6 +103,25 @@
       </section>
     </main>
 
-    <script src="movie.js?v=9"></script>
+    <!-- Recommend modal -->
+    <div id="recommendModal" class="modal-overlay" style="display:none" role="dialog" aria-modal="true">
+      <div class="modal-box">
+        <button class="modal-close" id="recommendClose" aria-label="Close">×</button>
+        <h3 class="modal-title">Recommend to a friend</h3>
+        <div id="recommendFriendsList" class="recommend-friends-list"></div>
+        <textarea id="recommendMsg" class="recommend-msg" placeholder="Add a message… (optional)" maxlength="200"></textarea>
+        <button id="recommendSend" class="recommend-send-btn" disabled>Send</button>
+        <p id="recommendFeedback" class="recommend-feedback"></p>
+
+        <div class="modal-divider"><span>or share externally</span></div>
+        <div class="share-external-row">
+          <a id="shareWhatsapp" class="share-external-btn" target="_blank" rel="noopener">WhatsApp</a>
+          <a id="shareEmail" class="share-external-btn">Email</a>
+          <button id="shareCopy" class="share-external-btn">Copy link</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="movie.js?v=17"></script>
   </body>
 </html>

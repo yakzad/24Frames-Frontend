@@ -1,4 +1,3 @@
-const token = localStorage.getItem("token");
 const user = JSON.parse(localStorage.getItem("user") || "null");
 
 const params = new URLSearchParams(window.location.search);
@@ -8,8 +7,12 @@ if (!movieId) {
   window.location.href = "index.html";
 }
 
+function escapeHtml(s) {
+  return String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+}
+
 fetch(`https://api.24frames.app/movie/${movieId}`, {
-  headers: token ? { Authorization: `Bearer ${token}` } : {},
+  credentials: user ? "include" : "omit",
 })
   .then((res) => res.json())
   .then((data) => {
@@ -30,7 +33,9 @@ fetch(`https://api.24frames.app/movie/${movieId}`, {
       "movieRating"
     ).textContent = `⭐ ${data.vote_average} (${data.vote_count} votes)`;
 
-    // update meta tags for social sharing
+    currentMovieTitle = title;
+    currentMoviePoster = data.poster_path || "";
+
     const pageTitle = `${title} — 24Frames`;
     const desc = data.overview
       ? data.overview.slice(0, 200)
@@ -61,13 +66,10 @@ let isFavourited = false;
 
 async function resolveUserId() {
   if (user?.id) return user.id;
-  if (!token) return null;
-  const res = await fetch("https://api.24frames.app/profile", {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+  if (!user) return null;
+  const res = await fetch("https://api.24frames.app/profile", { credentials: "include" });
   if (!res.ok) return null;
   const data = await res.json();
-  if (!user) user = {};
   user.id = data.user.ID;
   localStorage.setItem("user", JSON.stringify(user));
   return user.id;
@@ -87,7 +89,7 @@ function initRating() {
   document.getElementById("ratingWrap").style.display = "block";
 
   fetch(`https://api.24frames.app/movie/${movieId}/rating`, {
-    headers: { Authorization: `Bearer ${token}` },
+    credentials: "include",
   })
     .then((res) => res.json())
     .then((data) => {
@@ -108,10 +110,8 @@ function initRating() {
       try {
         const res = await fetch(`https://api.24frames.app/movie/${movieId}/rate`, {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
           body: JSON.stringify({ score }),
         });
         if (!res.ok) throw new Error();
@@ -124,7 +124,7 @@ function initRating() {
   });
 }
 
-if (token) {
+if (user) {
   resolveUserId().then((userId) => {
     if (!userId) return;
     fetch(`https://api.24frames.app/lists/${userId}`)
@@ -148,10 +148,12 @@ if (token) {
       });
 
     initRating();
+
+    const recommendBtn = document.getElementById("recommendBtn");
+    if (recommendBtn) recommendBtn.style.display = "inline-block";
   });
 }
 
-// add-to-list dropdown
 const addToListBtn = document.getElementById("addToListBtn");
 const listPicker = document.getElementById("listPicker");
 
@@ -163,7 +165,7 @@ addToListBtn?.addEventListener("click", (e) => {
   listPicker.innerHTML = allLists.map((list) => {
     const inList = (list.movie_ids || []).includes(movieId);
     return `<button class="list-picker-item${inList ? " in-list" : ""}" data-list-id="${list.ID}" data-in-list="${inList}">
-      ${inList ? "✓ " : ""}${list.name}
+      ${inList ? "✓ " : ""}${escapeHtml(list.name)}
     </button>`;
   }).join("");
 
@@ -177,7 +179,7 @@ addToListBtn?.addEventListener("click", (e) => {
       try {
         const res = await fetch(`https://api.24frames.app/lists/${listId}/movies/${movieId}`, {
           method,
-          headers: { Authorization: `Bearer ${token}` },
+          credentials: "include",
         });
         if (!res.ok) throw new Error();
 
@@ -190,7 +192,6 @@ addToListBtn?.addEventListener("click", (e) => {
           }
         }
 
-        // sync heart button if this is Favourites
         if (list?.name === "Favourites") {
           isFavourited = !inList;
           const heartBtn = document.getElementById("favouriteBtn");
@@ -211,7 +212,7 @@ addToListBtn?.addEventListener("click", (e) => {
 document.addEventListener("click", () => listPicker?.classList.remove("open"));
 
 document.getElementById("favouriteBtn")?.addEventListener("click", async () => {
-  if (!token || !favouritesListId) return;
+  if (!user || !favouritesListId) return;
   const btn = document.getElementById("favouriteBtn");
   btn.disabled = true;
 
@@ -219,7 +220,7 @@ document.getElementById("favouriteBtn")?.addEventListener("click", async () => {
   try {
     const res = await fetch(
       `https://api.24frames.app/lists/${favouritesListId}/movies/${movieId}`,
-      { method, headers: { Authorization: `Bearer ${token}` } }
+      { method, credentials: "include" }
     );
     if (!res.ok) throw new Error();
     isFavourited = !isFavourited;
@@ -230,6 +231,132 @@ document.getElementById("favouriteBtn")?.addEventListener("click", async () => {
   } finally {
     btn.disabled = false;
   }
+});
+
+// ── Recommend feature ──────────────────────────────────────────────────────
+let recommendFriends = null;
+let selectedFriendId = null;
+let currentMovieTitle = "";
+let currentMoviePoster = "";
+
+document.getElementById("recommendBtn")?.addEventListener("click", openRecommendModal);
+document.getElementById("recommendClose")?.addEventListener("click", closeRecommendModal);
+document.getElementById("recommendModal")?.addEventListener("click", (e) => {
+  if (e.target === document.getElementById("recommendModal")) closeRecommendModal();
+});
+
+function openRecommendModal() {
+  selectedFriendId = null;
+  document.getElementById("recommendSend").disabled = true;
+  document.getElementById("recommendMsg").value = "";
+  document.getElementById("recommendFeedback").textContent = "";
+  document.getElementById("recommendModal").style.display = "flex";
+  updateShareLinks();
+
+  if (recommendFriends !== null) {
+    renderFriendsList(recommendFriends);
+    return;
+  }
+
+  const listEl = document.getElementById("recommendFriendsList");
+  listEl.innerHTML = "<p class='rec-loading'>Loading friends…</p>";
+
+  resolveUserId().then((userId) => {
+    if (!userId) return;
+    fetch(`https://api.24frames.app/users/${userId}/friends`, { credentials: "include" })
+      .then((res) => res.json())
+      .then((data) => {
+        recommendFriends = data.users || [];
+        renderFriendsList(recommendFriends);
+      })
+      .catch(() => {
+        listEl.innerHTML = "<p class='rec-loading'>Failed to load friends.</p>";
+      });
+  });
+}
+
+function closeRecommendModal() {
+  document.getElementById("recommendModal").style.display = "none";
+}
+
+function renderFriendsList(friends) {
+  const listEl = document.getElementById("recommendFriendsList");
+  if (!friends.length) {
+    listEl.innerHTML = "<p class='rec-loading'>You have no mutual friends yet. Follow each other to become friends!</p>";
+    return;
+  }
+  listEl.innerHTML = friends
+    .map((f) => {
+      const display = escapeHtml(f.name || f.username || "User");
+      const handle = f.username ? `@${escapeHtml(f.username)}` : "";
+      return `<button class="rec-friend-chip" data-id="${f.ID}">
+        <span class="rec-friend-name">${display}</span>
+        ${handle ? `<span class="rec-friend-handle">${handle}</span>` : ""}
+      </button>`;
+    })
+    .join("");
+
+  listEl.querySelectorAll(".rec-friend-chip").forEach((chip) => {
+    chip.addEventListener("click", () => {
+      listEl.querySelectorAll(".rec-friend-chip").forEach((c) => c.classList.remove("selected"));
+      chip.classList.add("selected");
+      selectedFriendId = parseInt(chip.dataset.id);
+      document.getElementById("recommendSend").disabled = false;
+    });
+  });
+}
+
+document.getElementById("recommendSend")?.addEventListener("click", async () => {
+  if (!selectedFriendId) return;
+  const msg = document.getElementById("recommendMsg").value.trim();
+  const sendBtn = document.getElementById("recommendSend");
+  const feedback = document.getElementById("recommendFeedback");
+  sendBtn.disabled = true;
+  feedback.textContent = "";
+
+  try {
+    const res = await fetch(`https://api.24frames.app/movie/${movieId}/recommend`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({
+        to_user_id: selectedFriendId,
+        message: msg,
+        movie_title: currentMovieTitle,
+        movie_poster: currentMoviePoster,
+      }),
+    });
+    if (!res.ok) throw new Error();
+    feedback.textContent = "Recommendation sent!";
+    feedback.style.color = "#6fcf97";
+    setTimeout(closeRecommendModal, 1200);
+  } catch {
+    feedback.textContent = "Failed to send. Try again.";
+    feedback.style.color = "#e74c3c";
+    sendBtn.disabled = false;
+  }
+});
+
+// ── External share links ──────────────────────────────────────────────────
+function updateShareLinks() {
+  const movieUrl = `https://24frames.app/movie.html?id=${movieId}`;
+  const senderName = user?.name || user?.username || "Someone";
+  const shareText = `${senderName} thinks you should see ${currentMovieTitle || "this movie"} on 24Frames!`;
+  const emailBody = `${shareText}\n\nWatch on 24Frames: ${movieUrl}\n\nNew to 24Frames? Sign up at https://24frames.app/register.html`;
+
+  const waEl = document.getElementById("shareWhatsapp");
+  const mailEl = document.getElementById("shareEmail");
+  if (waEl) waEl.href = `https://wa.me/?text=${encodeURIComponent(`${shareText} ${movieUrl}`)}`;
+  if (mailEl) mailEl.href = `mailto:?subject=${encodeURIComponent(shareText)}&body=${encodeURIComponent(emailBody)}`;
+}
+
+document.getElementById("shareCopy")?.addEventListener("click", () => {
+  const movieUrl = `https://24frames.app/movie.html?id=${movieId}`;
+  navigator.clipboard.writeText(movieUrl).then(() => {
+    const btn = document.getElementById("shareCopy");
+    btn.textContent = "Copied!";
+    setTimeout(() => { btn.textContent = "Copy link"; }, 1800);
+  });
 });
 
 const tabBtns = document.querySelectorAll(".tab-btn");
@@ -247,14 +374,14 @@ tabBtns.forEach((btn) => {
     document.getElementById(btn.dataset.tab + "Section").style.display = "";
 
     const tab = btn.dataset.tab;
-    if (tab !== "videos" && token && !loadedTabs.has(tab)) {
+    if (tab !== "videos" && user && !loadedTabs.has(tab)) {
       loadedTabs.add(tab);
       loadPosts(tab);
     }
   });
 });
 
-if (!token) {
+if (!user) {
   const placeholders = [
     { username: "cinephile42", body: "This film completely changed how I see modern cinema. The cinematography alone deserves an award." },
     { username: "reel_thoughts", body: "A masterclass in storytelling. Every frame feels intentional and the performances are outstanding." },
@@ -264,7 +391,7 @@ if (!token) {
   ["reviews", "theories", "funfacts"].forEach((tab) => {
     document.getElementById(tab + "Section").classList.add("locked");
     document.getElementById(listIds[tab]).innerHTML = placeholders
-      .map((p) => `<div class="review-card"><h4>@${p.username}</h4><p class="review-excerpt">${p.body}</p></div>`)
+      .map((p) => `<div class="review-card"><h4>@${escapeHtml(p.username)}</h4><p class="review-excerpt">${escapeHtml(p.body)}</p></div>`)
       .join("");
   });
 }
@@ -273,7 +400,10 @@ async function loadPosts(tab) {
   const listEl = document.getElementById(listIds[tab]);
   listEl.innerHTML = "<p class='muted'>Loading…</p>";
   try {
-    const res = await fetch(`https://api.24frames.app/movie/${movieId}/posts?type=${typeMap[tab]}`);
+    const res = await fetch(
+      `https://api.24frames.app/movie/${movieId}/posts?type=${typeMap[tab]}`,
+      { credentials: "include" }
+    );
     const data = await res.json();
     renderPosts(data.posts || [], listEl, tab);
   } catch {
@@ -288,9 +418,69 @@ function renderPosts(posts, container, tab) {
     return;
   }
   container.innerHTML = posts
-    .map((p) => `<div class="review-card"><h4>@${p.username}</h4><p class="review-excerpt">${p.body}</p></div>`)
+    .map((p) => {
+      const display = escapeHtml(p.name || p.username || "User");
+      const count = p.like_count || 0;
+      const likedClass = p.liked_by_me ? " liked" : "";
+      return `
+        <div class="review-card" data-post-id="${p.ID}">
+          <div class="post-header">
+            <img class="post-avatar" src="images/claqueta%20profile.png" alt="" />
+            <div class="post-meta">
+              <span class="post-name">${display}</span>
+              <span class="post-handle">@${escapeHtml(p.username)}</span>
+            </div>
+          </div>
+          <p class="review-excerpt">${escapeHtml(p.body)}</p>
+          <div class="post-footer">
+            ${user ? `<button class="like-btn${likedClass}" data-post-id="${p.ID}" data-liked="${p.liked_by_me ? "1" : "0"}" data-count="${count}">♥ <span class="like-count">${count}</span></button>` : `<span class="like-count-static">♥ ${count}</span>`}
+          </div>
+        </div>
+      `;
+    })
     .join("");
 }
+
+function initLikeHandlers() {
+  ["reviewsList", "theoriesList", "funfactsList"].forEach((listId) => {
+    document.getElementById(listId)?.addEventListener("click", async (e) => {
+      const btn = e.target.closest(".like-btn");
+      if (!btn || !user) return;
+
+      const postId = btn.dataset.postId;
+      const wasLiked = btn.dataset.liked === "1";
+      const prevCount = parseInt(btn.dataset.count) || 0;
+      const countEl = btn.querySelector(".like-count");
+
+      const newLiked = !wasLiked;
+      const newCount = newLiked ? prevCount + 1 : Math.max(0, prevCount - 1);
+      btn.classList.toggle("liked", newLiked);
+      btn.dataset.liked = newLiked ? "1" : "0";
+      btn.dataset.count = newCount;
+      countEl.textContent = newCount;
+
+      try {
+        const res = await fetch(`https://api.24frames.app/posts/${postId}/like`, {
+          method: "POST",
+          credentials: "include",
+        });
+        if (!res.ok) throw new Error();
+        const data = await res.json();
+        btn.dataset.count = data.like_count;
+        countEl.textContent = data.like_count;
+        btn.dataset.liked = data.liked ? "1" : "0";
+        btn.classList.toggle("liked", data.liked);
+      } catch {
+        btn.classList.toggle("liked", wasLiked);
+        btn.dataset.liked = wasLiked ? "1" : "0";
+        btn.dataset.count = prevCount;
+        countEl.textContent = prevCount;
+      }
+    });
+  });
+}
+
+initLikeHandlers();
 
 async function submitPost(e, tab, endpoint) {
   e.preventDefault();
@@ -301,7 +491,8 @@ async function submitPost(e, tab, endpoint) {
   try {
     const res = await fetch(`https://api.24frames.app/movie/${movieId}/${endpoint}`, {
       method: "POST",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
       body: JSON.stringify({ content }),
     });
     if (!res.ok) {
@@ -311,8 +502,8 @@ async function submitPost(e, tab, endpoint) {
     e.target.reset();
     loadedTabs.delete(tab);
     loadPosts(tab);
-  } catch {
-    alert("Failed to post. Please try again.");
+  } catch (err) {
+    alert(err.message || "Failed to post. Please try again.");
   } finally {
     btn.disabled = false;
   }
@@ -329,7 +520,7 @@ function loadVideos(movieId) {
   videosSection.innerHTML = "<p>Loading videos...</p>";
 
   fetch(`https://api.24frames.app/movie/${movieId}/video`, {
-    headers: token ? { Authorization: `Bearer ${token}` } : {},
+    credentials: user ? "include" : "omit",
   })
     .then((res) => res.json())
     .then((videos) => {
@@ -345,9 +536,9 @@ function loadVideos(movieId) {
         wrapper.className = "video-item";
 
         wrapper.innerHTML = `
-          <h3>${video.name || "Untitled video"}</h3>
+          <h3>${escapeHtml(video.name || "Untitled video")}</h3>
           <iframe
-            src="${video.url}"
+            src="${escapeHtml(video.url)}"
             width="100%"
             height="315"
             frameborder="0"
@@ -362,7 +553,6 @@ function loadVideos(movieId) {
     })
     .catch((err) => {
       console.error(err);
-      videosSection.innerHTML =
-        "<p>Error loading videos. Please try again later.</p>";
+      videosSection.innerHTML = "<p>Error loading videos. Please try again later.</p>";
     });
 }
