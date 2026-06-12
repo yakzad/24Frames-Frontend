@@ -830,6 +830,30 @@ body {
   animation: highlight-fade 2.5s ease forwards;
 }
 
+.login-to-post {
+  font-size: 0.875rem;
+  color: rgba(230, 220, 200, 0.5);
+  margin-bottom: 16px;
+}
+
+.login-to-post a,
+.reply-login a {
+  color: #f6dcac;
+  text-decoration: none;
+}
+
+.login-to-post a:hover,
+.reply-login a:hover {
+  text-decoration: underline;
+}
+
+.reply-login {
+  font-size: 0.8rem;
+  color: rgba(230, 220, 200, 0.45);
+  margin-top: 8px;
+  padding-left: 2px;
+}
+
 .post-body-clickable {
   cursor: pointer;
 }

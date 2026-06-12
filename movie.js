@@ -386,7 +386,7 @@ tabBtns.forEach((btn) => {
     document.getElementById(btn.dataset.tab + "Section").style.display = "";
 
     const tab = btn.dataset.tab;
-    if (tab !== "videos" && user && !loadedTabs.has(tab)) {
+    if (tab !== "videos" && !loadedTabs.has(tab)) {
       loadedTabs.add(tab);
       loadPosts(tab);
     }
@@ -394,17 +394,13 @@ tabBtns.forEach((btn) => {
 });
 
 if (!user) {
-  const placeholders = [
-    { username: "cinephile42", body: "This film completely changed how I see modern cinema. The cinematography alone deserves an award." },
-    { username: "reel_thoughts", body: "A masterclass in storytelling. Every frame feels intentional and the performances are outstanding." },
-    { username: "framebyframe", body: "I've watched this three times and keep noticing new details. Highly recommended." },
-  ];
-
+  document.querySelectorAll(".post-form").forEach((f) => (f.style.display = "none"));
   ["reviews", "theories", "funfacts"].forEach((tab) => {
-    document.getElementById(tab + "Section").classList.add("locked");
-    document.getElementById(listIds[tab]).innerHTML = placeholders
-      .map((p) => `<div class="review-card"><h4>@${escapeHtml(p.username)}</h4><p class="review-excerpt">${escapeHtml(p.body)}</p></div>`)
-      .join("");
+    const section = document.getElementById(tab + "Section");
+    const prompt = document.createElement("p");
+    prompt.className = "login-to-post";
+    prompt.innerHTML = `<a href="login.html">Log in</a> to post`;
+    section.prepend(prompt);
   });
 }
 
@@ -453,10 +449,13 @@ function renderPosts(posts, container, tab) {
           </div>
           <div class="replies-section" id="replies-${p.ID}" style="display:none">
             <div class="replies-list" id="replies-list-${p.ID}"></div>
-            ${user ? `<div class="reply-form">
-              <textarea class="reply-input" placeholder="Write a reply…" maxlength="500" rows="2"></textarea>
-              <button class="reply-submit" data-post-id="${p.ID}">Reply</button>
-            </div>` : ""}
+            ${user
+              ? `<div class="reply-form">
+                <textarea class="reply-input" placeholder="Write a reply…" maxlength="500" rows="2"></textarea>
+                <button class="reply-submit" data-post-id="${p.ID}">Reply</button>
+              </div>`
+              : `<p class="reply-login"><a href="login.html">Log in</a> to reply</p>`
+            }
           </div>
         </div>
       `;
