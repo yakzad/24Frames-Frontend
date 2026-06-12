@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -6,9 +6,9 @@
     <title>24Frames — Settings</title>
     <meta name="robots" content="noindex" />
     <meta name="theme-color" content="#0f1e3a" />
-    <link rel="stylesheet" href="index.css?v=5" />
-    <link rel="stylesheet" href="settings.css?v=1" />
-    <link rel="icon" href="images/favicon.ico" />
+    <link rel="stylesheet" href="index.css?v=7" />
+    <link rel="stylesheet" href="settings.css?v=2" />
+    <link rel="icon" type="image/png" href="images/24frames1.png" />
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet" />
   </head>
   <body>
@@ -26,6 +26,7 @@
           <a href="lists.html">My Lists</a>
           <a href="friends.html">Friends</a>
           <a href="reviews.html">My Reviews</a>
+          <a href="notifications.html">Notifications</a>
           <a href="settings.html" class="active">Settings</a>
         </nav>
         <div class="sidebar-footer" id="sidebarFooter">
@@ -33,6 +34,14 @@
         </div>
       </aside>
 
+      <header class="app-header">
+        <a href="index.html" class="logo">
+          <img src="images/24frames1.png" alt="24Frames logo" />
+        </a>
+        <form id="searchForm" action="index.html">
+          <input type="search" name="q" id="searchInput" placeholder="Search movies, actors, directors…" />
+        </form>
+      </header>
       <main class="app-content">
         <h2 class="section-title">Settings</h2>
 
@@ -50,6 +59,14 @@
             <input type="email" id="settingEmail" name="email" placeholder="you@example.com" />
           </div>
 
+          <div class="settings-group settings-toggle-group">
+            <span class="settings-toggle-label">Show NC-17 content</span>
+            <label class="toggle-switch">
+              <input type="checkbox" id="settingIncludeAdult" name="settings_include_adult" />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
           <div class="settings-actions">
             <button type="submit" class="settings-save-btn" id="saveBtn">Save changes</button>
             <p class="settings-feedback" id="settingsFeedback"></p>
@@ -58,7 +75,7 @@
       </main>
     </div>
 
-    <script src="sidebar.js?v=3"></script>
-    <script src="settings.js?v=1"></script>
+    <script src="sidebar.js?v=5"></script>
+    <script src="settings.js?v=2"></script>
   </body>
 </html>

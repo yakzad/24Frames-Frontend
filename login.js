@@ -48,6 +48,7 @@ form.addEventListener("submit", async (e) => {
           name: data.user.name,
           username: data.user.username,
           avatar: data.user.avatar || "",
+          settings_include_adult: data.user.settings_include_adult || false,
         })
       );
     }
