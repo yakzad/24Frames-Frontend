@@ -858,17 +858,24 @@ body {
 .reply-author-link {
   text-decoration: none;
   color: inherit;
-  border-radius: 8px;
-  transition: background 0.12s;
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  width: fit-content;
 }
 
-.post-author-link:hover,
-.reply-author-link:hover {
-  background: rgba(255, 255, 255, 0.05);
+.post-author-link:hover .post-name,
+.post-author-link:hover img,
+.reply-author-link:hover .reply-name,
+.reply-author-link:hover img {
+  opacity: 0.8;
+}
+
+a.post-name,
+a.reply-name {
+  cursor: pointer;
+  transition: opacity 0.12s;
+}
+
+a.post-name:hover,
+a.reply-name:hover {
+  opacity: 0.75;
 }
 
 .post-body-clickable {
