@@ -11,6 +11,18 @@ function escapeHtml(s) {
   return String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
 }
 
+function timeAgo(dateStr) {
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 1) return "just now";
+  if (mins < 60) return `${mins}m ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs}h ago`;
+  const days = Math.floor(hrs / 24);
+  if (days < 7) return `${days}d ago`;
+  return new Date(dateStr).toLocaleDateString();
+}
+
 fetch(`https://api.24frames.app/movie/${movieId}`, {
   credentials: user ? "include" : "omit",
 })
@@ -422,18 +434,29 @@ function renderPosts(posts, container, tab) {
       const display = escapeHtml(p.name || p.username || "User");
       const count = p.like_count || 0;
       const likedClass = p.liked_by_me ? " liked" : "";
+      const replyCount = p.reply_count || 0;
+      const replyBadge = replyCount > 0 ? `<span class="reply-count-badge">${replyCount}</span>` : "";
       return `
         <div class="review-card" data-post-id="${p.ID}">
           <div class="post-header">
             <img class="post-avatar" src="images/claqueta%20profile.png" alt="" />
             <div class="post-meta">
               <span class="post-name">${display}</span>
-              <span class="post-handle">@${escapeHtml(p.username)}</span>
+              <span class="post-handle">@${escapeHtml(p.username)} · ${timeAgo(p.created_at)}</span>
             </div>
           </div>
-          <p class="review-excerpt">${escapeHtml(p.body)}</p>
+          <p class="review-excerpt post-body-clickable" data-post-id="${p.ID}">${escapeHtml(p.body)}</p>
           <div class="post-footer">
             ${user ? `<button class="like-btn${likedClass}" data-post-id="${p.ID}" data-liked="${p.liked_by_me ? "1" : "0"}" data-count="${count}">♥ <span class="like-count">${count}</span></button>` : `<span class="like-count-static">♥ ${count}</span>`}
+            <button class="share-btn" data-post-id="${p.ID}" data-tab="${tab}" title="Share" aria-label="Share post"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg></button>
+            <button class="replies-toggle" data-post-id="${p.ID}" data-count="${replyCount}" title="Replies" aria-label="Toggle replies"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>${replyBadge}</button>
+          </div>
+          <div class="replies-section" id="replies-${p.ID}" style="display:none">
+            <div class="replies-list" id="replies-list-${p.ID}"></div>
+            ${user ? `<div class="reply-form">
+              <textarea class="reply-input" placeholder="Write a reply…" maxlength="500" rows="2"></textarea>
+              <button class="reply-submit" data-post-id="${p.ID}">Reply</button>
+            </div>` : ""}
           </div>
         </div>
       `;
@@ -441,9 +464,142 @@ function renderPosts(posts, container, tab) {
     .join("");
 }
 
+const loadedReplies = new Set();
+
+async function fetchReplies(postId) {
+  const listEl = document.getElementById(`replies-list-${postId}`);
+  if (!listEl) return;
+  try {
+    const res = await fetch(`https://api.24frames.app/posts/${postId}/replies`, {
+      credentials: "include",
+    });
+    const data = await res.json();
+    renderReplies(data.replies || [], listEl);
+  } catch {
+    listEl.innerHTML = '<p class="muted">Failed to load replies.</p>';
+  }
+}
+
+function renderReplies(replies, container) {
+  if (!replies.length) {
+    container.innerHTML = '<p class="muted reply-empty">No replies yet.</p>';
+    return;
+  }
+  container.innerHTML = replies
+    .map((r) => {
+      const display = escapeHtml(r.name || r.username || "User");
+      return `
+        <div class="reply-card">
+          <div class="reply-header">
+            <img class="reply-avatar" src="images/claqueta%20profile.png" alt="" />
+            <div class="reply-meta">
+              <span class="reply-name">${display}</span>
+              <span class="reply-handle">@${escapeHtml(r.username)} · ${timeAgo(r.created_at)}</span>
+            </div>
+          </div>
+          <p class="reply-body">${escapeHtml(r.body)}</p>
+        </div>
+      `;
+    })
+    .join("");
+}
+
+function toggleReplies(postId) {
+  const section = document.getElementById(`replies-${postId}`);
+  if (!section) return;
+  const isHidden = section.style.display === "none";
+  section.style.display = isHidden ? "" : "none";
+  if (isHidden && !loadedReplies.has(postId)) {
+    loadedReplies.add(postId);
+    const listEl = document.getElementById(`replies-list-${postId}`);
+    if (listEl) listEl.innerHTML = '<p class="muted">Loading…</p>';
+    fetchReplies(postId);
+  }
+}
+
 function initLikeHandlers() {
   ["reviewsList", "theoriesList", "funfactsList"].forEach((listId) => {
     document.getElementById(listId)?.addEventListener("click", async (e) => {
+      const shareBtn = e.target.closest(".share-btn");
+      if (shareBtn) {
+        const postId = shareBtn.dataset.postId;
+        const tab = shareBtn.dataset.tab;
+        const url = `https://24frames.app/movie.html?id=${movieId}&post=${postId}&tab=${tab}`;
+        if (navigator.share) {
+          navigator.share({ url, title: document.title }).catch(() => {});
+        } else {
+          try {
+            await navigator.clipboard.writeText(url);
+            const orig = shareBtn.innerHTML;
+            shareBtn.innerHTML = "✓";
+            setTimeout(() => { shareBtn.innerHTML = orig; }, 2000);
+          } catch {
+            prompt("Copy this link:", url);
+          }
+        }
+        return;
+      }
+
+      const repliesToggle = e.target.closest(".replies-toggle");
+      if (repliesToggle) {
+        toggleReplies(repliesToggle.dataset.postId);
+        return;
+      }
+
+      const bodyClick = e.target.closest(".post-body-clickable");
+      if (bodyClick) {
+        toggleReplies(bodyClick.dataset.postId);
+        return;
+      }
+
+      const replySubmit = e.target.closest(".reply-submit");
+      if (replySubmit && user) {
+        const postId = replySubmit.dataset.postId;
+        const section = document.getElementById(`replies-${postId}`);
+        const textarea = section?.querySelector(".reply-input");
+        if (!textarea) return;
+        const content = textarea.value.trim();
+        if (!content) return;
+
+        replySubmit.disabled = true;
+        try {
+          const res = await fetch(`https://api.24frames.app/posts/${postId}/reply`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({ content }),
+          });
+          if (!res.ok) {
+            const data = await res.json();
+            throw new Error(data.error || "Failed to reply");
+          }
+          textarea.value = "";
+          loadedReplies.delete(postId);
+          const listEl = document.getElementById(`replies-list-${postId}`);
+          if (listEl) listEl.innerHTML = '<p class="muted">Loading…</p>';
+          loadedReplies.add(postId);
+          fetchReplies(postId);
+
+          const toggleBtn = document.querySelector(`.replies-toggle[data-post-id="${postId}"]`);
+          if (toggleBtn) {
+            const newCount = parseInt(toggleBtn.dataset.count || "0") + 1;
+            toggleBtn.dataset.count = newCount;
+            let badge = toggleBtn.querySelector(".reply-count-badge");
+            if (!badge) {
+              badge = document.createElement("span");
+              badge.className = "reply-count-badge";
+              toggleBtn.appendChild(badge);
+            }
+            badge.textContent = newCount;
+          }
+        } catch (err) {
+          alert(err.message || "Failed to reply. Please try again.");
+        } finally {
+          replySubmit.disabled = false;
+        }
+        return;
+      }
+
       const btn = e.target.closest(".like-btn");
       if (!btn || !user) return;
 
@@ -481,6 +637,29 @@ function initLikeHandlers() {
 }
 
 initLikeHandlers();
+
+(async () => {
+  const params = new URLSearchParams(location.search);
+  const targetPostId = params.get("post");
+  const targetTab = params.get("tab");
+  if (!targetPostId || !["reviews", "theories", "funfacts"].includes(targetTab)) return;
+
+  tabBtns.forEach((b) => b.classList.toggle("active", b.dataset.tab === targetTab));
+  tabSections.forEach((s) => (s.style.display = "none"));
+  document.getElementById(targetTab + "Section").style.display = "";
+
+  if (!loadedTabs.has(targetTab)) {
+    loadedTabs.add(targetTab);
+    await loadPosts(targetTab);
+  }
+
+  const el = document.querySelector(`[data-post-id="${CSS.escape(targetPostId)}"]`);
+  if (el) {
+    el.scrollIntoView({ behavior: "smooth", block: "center" });
+    el.classList.add("post-highlighted");
+    setTimeout(() => el.classList.remove("post-highlighted"), 2500);
+  }
+})();
 
 async function submitPost(e, tab, endpoint) {
   e.preventDefault();
